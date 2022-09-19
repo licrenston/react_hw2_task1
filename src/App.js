@@ -1,24 +1,31 @@
-import logo from './logo.svg';
-import './App.css';
+import {useEffect, useState} from "react";
+import {getUser, getUsers} from "./services/user.service";
+import UserComponents from "./components/UserComponents";
 
 function App() {
+
+  let [users, setUsers] = useState([]);
+  let [chosenUser, setChosenUseer] = useState(null);
+
+  useEffect(() => {
+    getUsers().then(value => setUsers(value.data));
+  }, [])
+
+  const chooseUser = (id) => {
+    getUser(id).then(value => setChosenUseer(value.data));
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <div>
+        <hr/>
+          {chosenUser && (<div>{JSON.stringify(chosenUser)}</div>)}
+        <hr/>
+        {users.map(value => <UserComponents
+            key={value.id}
+            item={value}
+            chooseUser={chooseUser}
+        />)}
+      </div>
   );
 }
 
